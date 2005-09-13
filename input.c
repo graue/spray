@@ -21,6 +21,8 @@ int getinput(void)
 				keys |= KEY_LEFT;
 			else if (event.key.keysym.sym == SDLK_RIGHT)
 				keys |= KEY_RIGHT;
+			else if (event.key.keysym.sym == SDLK_F2)
+				screen_save();
 			else if (event.key.keysym.sym == SDLK_ESCAPE)
 				exit(0);
 			else if (event.key.keysym.sym == SDLK_SPACE)

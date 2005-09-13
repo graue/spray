@@ -95,3 +95,14 @@ SDL_Surface *getscreen(void)
 {
 	return screen;
 }
+
+void screen_save(void)
+{
+	char filename[] = "xxxxxxxx.bmp";
+	int i;
+
+	for (i = 0; i < 8; i++)
+		filename[i] = rnd(26) + 'a';
+
+	SDL_SaveBMP(screen, filename);
+}

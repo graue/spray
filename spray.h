@@ -41,3 +41,4 @@ void updatescreen(void);
 SDL_Surface *getscreen(void);
 void clearscreen(void);
 void restorescreen(void);
+void screen_save(void);
