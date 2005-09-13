@@ -13,7 +13,7 @@ void startmusic(void)
 
 	atexit(Mix_CloseAudio);
 
-	music = Mix_LoadMUS("wak2.ogg");
+	music = Mix_LoadMUS("cool1.ogg");
 
 	if (music == NULL)
 		error("Mixer error: %s", Mix_GetError());
