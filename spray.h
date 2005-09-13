@@ -25,7 +25,8 @@ void displaytext(const char *text);
 void startmusic(void);
 
 /* random stuff */
-#define rnd(range) (random() % range)
+void random_seed(void);
+int rnd(int range);
 int rnd3(int range);
 
 /* time stuff */

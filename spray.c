@@ -19,20 +19,6 @@ void error(const char *msg, ...)
 	exit(1);
 }
 
-static void random_seed(void)
-{
-	srandomdev();
-}
-
-int rnd3(int range)
-{
-	int r1, r2, r3;
-	r1 = rnd(range);
-	r2 = rnd(range);
-	r3 = rnd(range);
-	return (r1+r2+r3) / 3;
-}
-
 int main(int argc, char *argv[])
 {
 	int score;
