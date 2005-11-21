@@ -1,3 +1,8 @@
+/*
+ * This file contains no creative content and is therefore not subject
+ * to copyright.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "SDL.h"
