@@ -1,2 +1,2 @@
 #!/bin/sh
-gcc *.c mt/*.c -o spray -Os -s -W -Wall `sdl-config --cflags --libs` -lSDL_mixer -lSDL_ttf
+gcc *.c -o spray -Os -s -W -Wall `sdl-config --cflags --libs` -lSDL_mixer -lSDL_ttf
