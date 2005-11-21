@@ -44,7 +44,7 @@
 */
 
 #include <stdio.h>
-#include "mt19937ar.h"
+#include "mt.h"
 
 /* Period parameters */  
 #define N 624
