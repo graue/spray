@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "SDL.h"
 
 #define TICK_INTERVAL 24
@@ -47,3 +48,7 @@ SDL_Surface *getscreen(void);
 void clearscreen(void);
 void restorescreen(void);
 void screen_save(void);
+
+/* string stuff for systems that don't have it */
+int my_vasprintf(char **ret, const char *format, va_list ap);
+int my_asprintf(char **ret, const char *format, ...);

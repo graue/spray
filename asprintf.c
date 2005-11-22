@@ -14,37 +14,40 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "spray.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
 
-void error(const char *msg, ...)
+int my_vasprintf(char **ret, const char *format, va_list ap)
 {
-	va_list argptr;
+	int charsneeded;
 	char *str;
 
-	va_start(argptr, msg);
-	if (vasprintf(&str, msg, argptr) == -1)
-		fprintf(stderr, "Error too long to print out: %s\n", msg);
-	else
-	{
-		fprintf(stderr, "%s\n", str);
-		free(str);
-	}
-	va_end(argptr);
+	charsneeded = vsnprintf(NULL, 0, format, ap) + 1;
+	str = malloc(charsneeded);
 
-	exit(1);
+	if (str == NULL)
+	{
+		/*
+		 * Setting *ret to NULL is what OpenBSD does, but it
+		 * should not be relied upon.
+		 */
+		*ret = NULL;
+		return -1;
+	}
+
+	*ret = str;
+	return vsprintf(str, format, ap);
 }
 
-int main(int argc, char *argv[])
+int my_asprintf(char **ret, const char *format, ...)
 {
-	int score;
+	int result;
+	va_list argptr;
 
-	random_seed();
-	setupvideo();
-	startmusic();
-	do
-	{
-		score = playgame();
-	} while (showmenu(score));
-	argc = argc, argv = argv;
-	return 0;
+	va_start(argptr, format);
+	result = my_vasprintf(ret, format, argptr);
+	va_end(argptr);
+
+	return result;
 }

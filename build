@@ -1,2 +1,2 @@
 #!/bin/sh
-gcc *.c -o spray -Os -s -W -Wall `sdl-config --cflags --libs` -lSDL_mixer -lSDL_ttf
+gcc *.c -Dasprintf=my_asprintf -Dvasprintf=my_vasprintf -o spray -Os -s -W -Wall `sdl-config --cflags --libs` -lSDL_mixer -lSDL_ttf
