@@ -2,8 +2,8 @@
 
 static SDL_Surface *screen;
 static SDL_Surface *fakescreen;
-static int minx =   0, miny =   0;
-static int maxx = 639, maxy = 479;
+static int minx =       0, miny =        0;
+static int maxx = WIDTH-1, maxy = HEIGHT-1;
 
 void setupvideo(void)
 {
@@ -12,13 +12,14 @@ void setupvideo(void)
 
 	atexit(SDL_Quit);
 
-	screen = SDL_SetVideoMode(640, 480, 0, SDL_ANYFORMAT|SDL_FULLSCREEN);
+	screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0,
+		SDL_ANYFORMAT|SDL_FULLSCREEN);
 	if (screen == NULL)
 		error("SDL error: %s", SDL_GetError());
 
 	SDL_ShowCursor(SDL_DISABLE);
 
-	fakescreen = SDL_CreateRGBSurface(0, 640, 480,
+	fakescreen = SDL_CreateRGBSurface(0, WIDTH, HEIGHT,
 		screen->format->BitsPerPixel,
 		screen->format->Rmask,
 		screen->format->Gmask,
@@ -80,14 +81,14 @@ void updatescreen(void)
 	SDL_BlitSurface(fakescreen, &area, screen, &area);
 	SDL_UpdateRect(screen, minx, miny, maxx - minx + 1, maxy - miny + 1);
 
-	minx = 639, miny = 479;
-	maxx =   0, maxy =   0;
+	minx = WIDTH-1, miny = HEIGHT-1;
+	maxx =       0, maxy =        0;
 }
 
 void restorescreen(void)
 {
-	minx =   0, miny =   0;
-	maxx = 639, maxy = 479;
+	minx =       0, miny =        0;
+	maxx = WIDTH-1, maxy = HEIGHT-1;
 	updatescreen();
 }
 

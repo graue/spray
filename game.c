@@ -1,8 +1,6 @@
 #include "spray.h"
 #include <math.h>
 
-#define WIDTH    640
-#define HEIGHT   480
 #define SCATTER   49 /* 39 */ /* 13 */
 #define SPRAY     12 /* 8 */ /* 2 */
 #define SPECIAL  190 /* 160 */ /* 30 */

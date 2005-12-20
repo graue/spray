@@ -20,11 +20,11 @@ void displaytext(const char *text)
 	if (TTF_SizeText(font, text, &textwidth, &textheight) < 0)
 		error("Font error: %s", TTF_GetError());
 
-	if (textwidth >= 640 || textheight >= 480)
+	if (textwidth >= WIDTH || textheight >= HEIGHT)
 		error("Font is too big (%dx%d)", textwidth, textheight);
 
-	dest.x = 320 - textwidth/2;
-	dest.y = 240 - textheight/2;
+	dest.x = WIDTH/2  - textwidth/2;
+	dest.y = HEIGHT/2 - textheight/2;
 	dest.w = textwidth;
 	dest.h = textheight;
 

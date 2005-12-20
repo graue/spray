@@ -3,6 +3,9 @@
 #include <stdarg.h>
 #include "SDL.h"
 
+#define WIDTH      640
+#define HEIGHT     480
+
 #define TICK_INTERVAL 24
 #define KEY_LEFT  (1<<0)
 #define KEY_RIGHT (1<<1)
