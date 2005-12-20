@@ -1,8 +1,6 @@
 /* 
    Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
    All rights reserved.                          
-   Copyright (C) 2005, Mutsuo Saito,
-   All rights reserved.                          
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
