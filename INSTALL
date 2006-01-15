@@ -1,0 +1,7 @@
+I haven't gotten around yet to writing a Makefile for this. Instead, run
+the included script, "./build". You need the SDL, SDL_mixer, and SDL_ttf
+libraries installed.
+
+On Windows, this'll work under MinGW but you will probably want to add
+the "-mwindows" option to the build script, to avoid the program making a
+console window when it runs.
