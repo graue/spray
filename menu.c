@@ -42,20 +42,13 @@ void displaytext(const char *text)
 	TTF_Quit();
 }
 
-static char *errorstring = "ERROR";
-
 int showmenu(const int score)
 {
-	char *scorestring;
+	char scorestring[12] = "";
 	SDL_Event event;
 
-	if (asprintf(&scorestring, "%d", score) == -1)
-		scorestring = errorstring;
-
+	snprintf(scorestring, sizeof scorestring, "%d", score);
 	displaytext(scorestring);
-
-	if (scorestring != errorstring)
-		free(scorestring);
 
 	while (1)
 	{
