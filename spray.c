@@ -3,16 +3,11 @@
 void error(const char *msg, ...)
 {
 	va_list argptr;
-	char *str;
+	char str[1600] = "";
 
 	va_start(argptr, msg);
-	if (vasprintf(&str, msg, argptr) == -1)
-		fprintf(stderr, "Error too long to print out: %s\n", msg);
-	else
-	{
-		fprintf(stderr, "%s\n", str);
-		free(str);
-	}
+	vsnprintf(str, sizeof str, msg, argptr);
+	fprintf(stderr, "%s\n", str);
 	va_end(argptr);
 
 	exit(1);
