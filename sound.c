@@ -9,7 +9,7 @@ void startmusic(void)
 		error("Audio error: %s", SDL_GetError());
 
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
-		error("Mixer error: %s", Mix_GetError());
+		return; /* no music */
 
 	atexit(Mix_CloseAudio);
 
