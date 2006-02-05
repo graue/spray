@@ -4,10 +4,15 @@
 void displaytext(const char *text)
 {
 	TTF_Font *font = NULL;
-	SDL_Color textcolor = {255, 192, 0}; /* happy orange */
+	SDL_Color textcolor;
 	SDL_Surface *textsurface;
 	SDL_Rect dest;
 	int textwidth, textheight;
+
+	/* happy orange */
+	textcolor.r = 255;
+	textcolor.g = 192;
+	textcolor.b = 0;
 
 	if (TTF_Init() < 0)
 		error("Font error: %s", TTF_GetError());
