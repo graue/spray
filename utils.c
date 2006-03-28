@@ -15,7 +15,7 @@ void random_seed(void)
 #ifdef USE_RANDOM
 	srandomdev();
 #else
-	init_genrand((unsigned long) time(NULL));
+	mt_init((unsigned long)time(NULL));
 #endif
 }
 
@@ -33,7 +33,7 @@ int rnd(int range)
 #ifdef USE_RANDOM
 	return random() % range;
 #else
-	return genrand_int31() % range;
+	return mt_rand() % range;
 #endif
 }
 

@@ -1,104 +1,121 @@
-/* 
-   Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
-   All rights reserved.                          
+/*
+ * This is an implementation of the Mersenne Twister random number
+ * generator. Since I haven't actually read and understood the paper,
+ * I just looked at the authors' C code and tried to do what they did,
+ * but differently, where I could. The magic numbers and operations
+ * performed are the same, though that shouldn't be enough for their
+ * copyright to apply.
+ *
+ * This code is in the public domain; you may deal in it without
+ * restriction.
+ * Written by Graue <graue@oceanbase.org> on February 23, 2006.
+ */
 
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions
-   are met:
+#ifndef _WIN32
+#include <sys/types.h>
+#else
+typedef int int32_t;
+typedef unsigned int u_int32_t;
+#endif
 
-     1. Redistributions of source code must retain the above copyright
-        notice, this list of conditions and the following disclaimer.
+/*
+ * The following parameters dictate the period of the generator.
+ *
+ * N is the length of the state vector, which is updated all at once
+ * each time N random numbers are consumed.
+ *
+ * Having not actually read the paper, I cannot say exactly what M and
+ * VECTOR_A do, but they are used in updating the state vector, in
+ * mt_update_state().
+ */
+#define N        624
+#define M        397
+#define VECTOR_A 0x9908b0dfUL
 
-     2. Redistributions in binary form must reproduce the above copyright
-        notice, this list of conditions and the following disclaimer in the
-        documentation and/or other materials provided with the distribution.
+static u_int32_t state_vector[N];
+static int state_index;
+static int inited;
 
-     3. The names of its contributors may not be used to endorse or promote 
-        products derived from this software without specific prior written 
-        permission.
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-#include <stdio.h>
-#include "mt.h"
-
-/* Period parameters */  
-#define N 624
-#define M 397
-#define MATRIX_A 0x9908b0dfUL   /* constant vector a */
-#define UPPER_MASK 0x80000000UL /* most significant w-r bits */
-#define LOWER_MASK 0x7fffffffUL /* least significant r bits */
-
-static unsigned long mt[N]; /* the array for the state vector  */
-static int mti=N+1; /* mti==N+1 means mt[N] is not initialized */
-
-/* initializes mt[N] with a seed */
-void init_genrand(unsigned long s)
+void mt_init(u_int32_t seed)
 {
-    mt[0]= s & 0xffffffffUL;
-    for (mti=1; mti<N; mti++) {
-        mt[mti] = 
-	    (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti); 
-        /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
-        /* In the previous versions, MSBs of the seed affect   */
-        /* only MSBs of the array mt[].                        */
-        /* 2002/01/09 modified by Makoto Matsumoto             */
-        mt[mti] &= 0xffffffffUL;
-        /* for >32 bit machines */
-    }
+	state_vector[0] = seed;
+	for (state_index = 1; state_index < N; state_index++)
+	{
+		state_vector[state_index] =
+			(1812433253UL * (state_vector[state_index-1]
+				^ (state_vector[state_index-1]>>30))
+				+ state_index);
+		/*
+		 * The multiplier here is as described in Knuth's
+		 * "The Art of Computer Programming", volume 2, third
+		 * edition, page 106.
+		 */
+	}
+	inited = 1;
 }
 
-/* generates a random number on [0,0xffffffff]-interval */
-static unsigned long genrand_int32(void)
+#define MAYBE_A(val) (((val)&1) ? VECTOR_A : 0)
+#define UPPER_BIT  0x80000000UL
+#define LOWER_BITS 0x7fffffffUL
+
+/*
+ * Generate N words.
+ * This is called by mt_rand() as necessary.
+ */
+static void mt_update_state(void)
 {
-    unsigned long y;
-    static unsigned long mag01[2]={0x0UL, MATRIX_A};
-    /* mag01[x] = x * MATRIX_A  for x=0,1 */
+	int ix;
+	int num;
 
-    if (mti >= N) { /* generate N words at one time */
-        int kk;
+	/* Use a default seed if mt_init() has not been called. */
+	if (!inited)
+		mt_init(5489UL);
 
-        if (mti == N+1)   /* if init_genrand() has not been called, */
-            init_genrand(5489UL); /* a default initial seed is used */
+	for (ix = 0; ix < N - M; ix++)
+	{
+		num = (state_vector[ix]&UPPER_BIT)
+			| (state_vector[ix+1]&LOWER_BITS);
+		state_vector[ix] = state_vector[ix+M] ^ (num>>1)
+			^ MAYBE_A(num);
+	}
 
-        for (kk=0;kk<N-M;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
-        }
-        for (;kk<N-1;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
-        }
-        y = (mt[N-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
-        mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
+	for (; ix < N-1; ix++)
+	{
+		num = (state_vector[ix]&UPPER_BIT)
+			| (state_vector[ix+1]&LOWER_BITS);
+		state_vector[ix] = state_vector[ix+(M-N)] ^ (num>>1)
+			^ MAYBE_A(num);
+	}
 
-        mti = 0;
-    }
-  
-    y = mt[mti++];
-
-    /* Tempering */
-    y ^= (y >> 11);
-    y ^= (y << 7) & 0x9d2c5680UL;
-    y ^= (y << 15) & 0xefc60000UL;
-    y ^= (y >> 18);
-
-    return y;
+	num = (state_vector[N-1]&UPPER_BIT)
+		| (state_vector[0]&LOWER_BITS);
+	state_vector[N-1] = state_vector[M-1] ^ (num>>1) ^ MAYBE_A(num);
+	state_index = 0;
 }
 
-/* generates a random number on [0,0x7fffffff]-interval */
-long genrand_int31(void)
+/* Generate a random unsigned 32-bit number. */
+u_int32_t mt_urand(void)
 {
-    return (long)(genrand_int32()>>1);
+	u_int32_t ret;
+
+	/*
+	 * Update the state, generating N words at once, when it is
+	 * necessary to do so.
+	 */
+	if (state_index >= N)
+		mt_update_state();
+
+	ret = state_vector[state_index++];
+
+	ret ^= (ret>>11);
+	ret ^= (ret<<7)  & 0x9d2c5680UL;
+	ret ^= (ret<<15) & 0xefc60000UL;
+	ret ^= (ret>>18);
+	return ret;
+}
+
+/* Generate a random nonnegative number, returned as a signed int. */
+int32_t mt_rand(void)
+{
+	return (int32_t)(mt_urand() / 2);
 }
