@@ -1,7 +1,6 @@
->>SPRAY<<            v0.1.1
+# Spray
 
 Originally made in about 14 hours on September 13, 2005.
-This version released January 16, 2006.
 
 Spray is a weird game.
 
@@ -15,5 +14,3 @@ often you collided -- is displayed when the game ends. At that point you
 can press Space to play again or Escape to quit.
 
 Any feedback is welcome.
-
-	Catatonic Porpoise <graue@oceanbase.org>
